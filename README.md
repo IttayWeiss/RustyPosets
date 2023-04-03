@@ -5,3 +5,7 @@ Finite posets are combinatorially intricate structures. They can be represented 
 some times quite strongly, the computational complexity of algorithms that compute, create, or manipulate posets. The aim of this repository is 
 to provide code to support different representations of finite posets, together with implementations of algorithms for each form of presentation, and
 functionality to convert between the different forms. 
+
+A related repository is [FinitePosets](https://github.com/jmichel7/FinitePosets.jl), providing some poset functionality for Julia. 
+
+Written in Rust.

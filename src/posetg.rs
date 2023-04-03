@@ -4,14 +4,14 @@ use crate::*;
 #[derive(PartialEq, Debug)]
 pub struct PosetG {
     pub md: MetaData,
-    h: HashMap<usize, HashSet<usize>>,
+    g: HashMap<usize, HashSet<usize>>,
 }
 
 impl PosetG {
-    pub fn new(h: &HashMap<usize, HashSet<usize>>) -> PosetG {
+    pub fn new(g: &HashMap<usize, HashSet<usize>>) -> PosetG {
         PosetG {
-            md: MetaData::new(h.keys().len()),
-            h: h.clone(),
+            md: MetaData::new(g.keys().len()),
+            g: g.clone(),
         }
     }
 }
@@ -20,7 +20,7 @@ impl PosetG {
 impl Poset for PosetG {
     fn find_bot(&mut self) {
         self.md.bot = Some(
-            match self.h.iter().find(|(_, s)| s.len() == self.md.n - 1) {
+            match self.g.iter().find(|(_, s)| s.len() == self.md.n - 1) {
                 Some((&i, _)) => Elt::A(i),
                 None => Elt::NotPresent,
             },
@@ -36,7 +36,7 @@ impl Poset for PosetG {
     }
 
     fn find_minimals(&mut self) {
-        let union: HashSet<usize> = self.h.values().fold(HashSet::new(), |mut a, s| {
+        let union: HashSet<usize> = self.g.values().fold(HashSet::new(), |mut a, s| {
             a.extend(s);
             a
         });
@@ -46,7 +46,7 @@ impl Poset for PosetG {
     fn find_maximals(&mut self) {
         self.md.maximals = Some(
             (0..self.md.n)
-                .filter(|i| self.h.get(i).unwrap().is_empty())
+                .filter(|i| self.g.get(i).unwrap().is_empty())
                 .collect(),
         )
     }
@@ -55,7 +55,7 @@ impl Poset for PosetG {
         let mut h = HashMap::new();
         for i in 0..self.md.n {
             let s: HashSet<_> = (0..self.md.n)
-                .filter(|j| self.h.get(j).unwrap().contains(&i))
+                .filter(|j| self.g.get(j).unwrap().contains(&i))
                 .collect();
             h.insert(i, s);
         }

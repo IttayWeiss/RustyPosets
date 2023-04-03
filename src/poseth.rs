@@ -32,26 +32,3 @@ impl Poset for PosetH {
         todo!();
     }
 }
-
-fn calc(isbn: &str) -> bool {
-    if isbn.len() != 10 || (isbn.contains("X") && !isbn.ends_with('X')) {
-        return false;
-    }
-    isbn.chars()
-        .enumerate()
-        .map(|(i, d)| {
-            (i + 1)
-                * (match d {
-                    'X' => 10,
-                    _ => d.to_digit(10).unwrap() as usize,
-                })
-        })
-        .sum::<usize>()
-        % 11
-        == 0
-}
-
-#[test]
-fn te() {
-    println!("{}", calc("123456789X"));
-}

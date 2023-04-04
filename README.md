@@ -24,5 +24,9 @@ By exhibiting functionality across different representations for all three main 
 - A robust framework to test algorithms that rely on posets. 
 - A reliable computational engine to be used in applications.
 
-## Related repositories
+## Related repositories and other resources
+This list is not exhaustive! 
+
 - [FinitePosets](https://github.com/jmichel7/FinitePosets.jl) - providing some poset functionality for Julia. 
+
+- [Macaulay2](http://www2.macaulay2.com/Macaulay2/doc/Macaulay2-1.19.1/share/doc/Macaulay2/Posets/html/index.html) a package providing poset functionality for algebra and geometry (journal [publication](https://msp.org/jsag/2015/7-1/jsag-v7-n1-p02-s.pdf) article).

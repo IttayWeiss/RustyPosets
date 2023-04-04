@@ -44,15 +44,28 @@
 
 use std::collections::{HashMap, HashSet};
 
+pub mod convertors;
 pub mod posetg;
 pub mod poseth;
 pub mod posetm;
+
 /// Provides variants for naming elements in a poset.
 /// # Usefulness illustration
 /// When instantiating a poset, its [MetaData]'s top value is set to None. This does not mean, though, that the poset
 /// does not have a top element. All it means is that it was not (yet) computed. Once it is computed,
 /// using [Poset::find_top], if it exists, then it is some value $0\le i < n$, and so top is set to
 /// `Some(Elt::A(i))`. If it does not exist, then top is set to `Some(Elt::NotPresent)`.
+/// ```
+/// let p = PosetG::new_chain(3);
+/// assert_eq!(p.md.top, None);
+/// p.find_top();
+/// assert_eq!(p.md.top, Some(Elt::A(1)));
+/// ```
+
+type Hasse = HashMap<usize, HashSet<usize>>;
+type BoolMatrix = Vec<Vec<bool>>;
+type BiPaGraph = HashMap<usize, HashSet<usize>>;
+
 #[derive(PartialEq, Debug, Hash, Eq)]
 pub enum Elt {
     /// A wrapper for the name of the element. If one imagines that the underlying set consists of the

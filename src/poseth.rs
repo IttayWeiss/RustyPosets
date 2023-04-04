@@ -1,14 +1,16 @@
-use crate::*;
+use crate::{Elt, Hasse, MetaData, Poset, PosetConstructors};
+
+use std::collections::{HashMap, HashSet};
 
 /// A representation of a poset encoded as a Hasse diagram.
 #[derive(Debug, PartialEq)]
 pub struct PosetH {
     pub md: MetaData,
-    h: HashMap<usize, HashSet<usize>>,
+    pub h: Hasse,
 }
 
 impl PosetH {
-    pub fn new(h: HashMap<usize, HashSet<usize>>) -> PosetH {
+    pub fn new(h: &Hasse) -> PosetH {
         PosetH {
             md: MetaData::new(h.keys().len()),
             h: h.to_owned(),

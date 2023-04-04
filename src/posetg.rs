@@ -1,14 +1,15 @@
-use crate::*;
+use crate::{BiPaGraph, Elt, MetaData, Poset, PosetConstructors};
 
+use std::collections::{HashMap, HashSet};
 /// A representation of a poset encoded as a directed bipartite graph.
 #[derive(PartialEq, Debug)]
 pub struct PosetG {
     pub md: MetaData,
-    g: HashMap<usize, HashSet<usize>>,
+    pub g: BiPaGraph,
 }
 
 impl PosetG {
-    pub fn new(g: &HashMap<usize, HashSet<usize>>) -> PosetG {
+    pub fn new(g: &BiPaGraph) -> PosetG {
         PosetG {
             md: MetaData::new(g.keys().len()),
             g: g.clone(),
@@ -52,33 +53,36 @@ impl Poset for PosetG {
     }
 
     fn op(&self) -> Self {
-        let mut h = HashMap::new();
+        let mut g: BiPaGraph = HashMap::new();
         for i in 0..self.md.n {
             let s: HashSet<_> = (0..self.md.n)
                 .filter(|j| self.g.get(j).unwrap().contains(&i))
                 .collect();
-            h.insert(i, s);
+            g.insert(i, s);
         }
-        PosetG::new(&h)
+        PosetG::new(&g)
     }
 }
 
 impl PosetConstructors for PosetG {
     fn new_chain(n: usize) -> PosetG {
-        let mut h = HashMap::new();
+        let mut g: BiPaGraph = HashMap::new();
         for i in 0..n {
-            let s: HashSet<_> = (i + 1..n).collect();
-            h.insert(i, s);
+            let s: HashSet<_> = (i..n).collect();
+            g.insert(i, s);
         }
-        PosetG::new(&h)
+        PosetG::new(&g)
     }
 
     fn new_antichain(n: usize) -> PosetG {
-        let mut h: HashMap<usize, HashSet<usize>> = HashMap::new();
-        for i in 0..n {
-            h.insert(i, HashSet::new());
-        }
-        PosetG::new(&h)
+        let g: BiPaGraph = (0..n)
+            .map(|i| {
+                let mut s = HashSet::new();
+                s.insert(i);
+                (i, s)
+            })
+            .collect();
+        PosetG::new(&g)
     }
 }
 

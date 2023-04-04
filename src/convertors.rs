@@ -1,10 +1,17 @@
+use crate::posetg::PosetG;
+use crate::poseth::PosetH;
+use crate::posetm::PosetM;
+use crate::{BiPaGraph, BoolMatrix, Hasse};
+
+use std::collections::HashMap;
+
 fn matrix_to_graph(p: PosetM) -> PosetG {
     let n = p.md.n;
     let g = (0..n)
-        .zip((0..n).map(|i| (0..n).filter(|j| p.m[i][j])))
+        .zip((0..n).map(|i| (0..n).filter(|&j| p.m[i][j]).collect()))
         .collect::<HashMap<_, _>>();
 
-    PosetM::new(g)
+    PosetG::new(&g)
 }
 
 fn matrix_to_hasse(p: PosetM) -> PosetH {
@@ -21,24 +28,32 @@ fn hasse_to_graph(p: PosetH) -> PosetG {
 
 fn graph_to_hasse(p: PosetG) -> PosetH {
     let n = p.md.n;
-    let h = (0..n)
+    let h: Hasse = (0..n)
         .zip((0..n).map(|i| {
-            p.g.get(i)
+            p.g.get(&i)
+                .unwrap()
                 .iter()
-                .filter(|j| !p.g.get(i).iter().any(|k| p.g.get(k).contains(j)))
+                .filter(|j| {
+                    !p.g.get(&i)
+                        .unwrap()
+                        .iter()
+                        .any(|k| p.g.get(k).unwrap().contains(j))
+                })
+                .map(|&x| x)
+                .collect()
         }))
-        .collect::<HashMap<_, _>>();
+        .collect();
 
-    PosetH::new(&h);
+    PosetH::new(&h)
 }
 
-fn graph_to_matrix(p: PosetG) -> PosetH {
+fn graph_to_matrix(p: PosetG) -> PosetM {
     let n = p.md.n;
-    let m = Vec::with_capacity(n);
+    let mut m: BoolMatrix = Vec::with_capacity(n);
     for i in 0..n {
-        let row = (0..n).map(|j| p.m[i][j]);
+        let row = (0..n).map(|j| p.g.get(&i).unwrap().contains(&j)).collect();
         m.push(row);
     }
 
-    PosetG::new(&m);
+    PosetM::new(&m)
 }

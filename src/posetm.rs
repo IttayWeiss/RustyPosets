@@ -1,14 +1,16 @@
-use crate::*;
+use crate::{BoolMatrix, Elt, MetaData, Poset, PosetConstructors, PosetModifiers};
+
+use ::std::collections::HashSet;
 
 /// A representation of a poset encoded as a matrix taking values in the boolean truth values.
 #[derive(PartialEq, Debug)]
 pub struct PosetM {
     pub md: MetaData,
-    m: Vec<Vec<bool>>,
+    pub m: BoolMatrix,
 }
 
 impl PosetM {
-    pub fn new(m: &Vec<Vec<bool>>) -> Self {
+    pub fn new(m: &BoolMatrix) -> Self {
         PosetM {
             md: MetaData::new(m.len()),
             m: m.to_owned(),
@@ -50,7 +52,7 @@ impl Poset for PosetM {
     }
 
     fn op(&self) -> PosetM {
-        let mut m: Vec<Vec<bool>> = Vec::with_capacity(self.md.n);
+        let mut m: BoolMatrix = Vec::with_capacity(self.md.n);
         for i in 0..self.md.n {
             m.push((0..self.md.n).map(|j| self.m[j][i]).collect())
         }
@@ -60,13 +62,13 @@ impl Poset for PosetM {
 
 impl PosetConstructors for PosetM {
     fn new_chain(n: usize) -> Self {
-        let m: Vec<Vec<_>> = (0..n).map(|i| (0..n).map(|j| i <= j).collect()).collect();
+        let m: BoolMatrix = (0..n).map(|i| (0..n).map(|j| i <= j).collect()).collect();
 
         PosetM::new(&m)
     }
 
     fn new_antichain(n: usize) -> Self {
-        let m: Vec<Vec<_>> = (0..n).map(|i| (0..n).map(|j| i == j).collect()).collect();
+        let m: BoolMatrix = (0..n).map(|i| (0..n).map(|j| i == j).collect()).collect();
 
         PosetM::new(&m)
     }
@@ -75,7 +77,7 @@ impl PosetConstructors for PosetM {
 impl PosetModifiers for PosetM {
     fn adjoin_bot(&self) -> Self {
         let n = self.md.n + 1;
-        let mut m: Vec<Vec<_>> = (0..self.md.n)
+        let mut m: BoolMatrix = (0..self.md.n)
             .map(|i| {
                 let mut row = self.m[i].clone();
                 row.push(false);

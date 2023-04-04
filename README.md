@@ -25,6 +25,4 @@ By exhibiting functionality across different representations for all three main 
 - A reliable computational engine to be used in applications.
 
 ## Related repositories
-A related repository is [FinitePosets](https://github.com/jmichel7/FinitePosets.jl), providing some poset functionality for Julia. 
-
-Written in Rust.
+- [FinitePosets](https://github.com/jmichel7/FinitePosets.jl) - providing some poset functionality for Julia. 

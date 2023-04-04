@@ -20,12 +20,10 @@ impl PosetG {
 // TODO: Computing bot/top when minimals/maximals are known is very easy. Can do that generically?
 impl Poset for PosetG {
     fn find_bot(&mut self) {
-        self.md.bot = Some(
-            match self.g.iter().find(|(_, s)| s.len() == self.md.n - 1) {
-                Some((&i, _)) => Elt::A(i),
-                None => Elt::NotPresent,
-            },
-        )
+        self.md.bot = Some(match self.g.iter().find(|(_, s)| s.len() == self.md.n) {
+            Some((&i, _)) => Elt::A(i),
+            None => Elt::NotPresent,
+        })
     }
 
     fn find_top(&mut self) {
@@ -37,17 +35,29 @@ impl Poset for PosetG {
     }
 
     fn find_minimals(&mut self) {
-        let union: HashSet<usize> = self.g.values().fold(HashSet::new(), |mut a, s| {
-            a.extend(s);
-            a
-        });
-        self.md.minimals = Some((0..self.md.n).filter(|i| !union.contains(i)).collect())
+        let non_minimals: HashSet<usize> = self
+            .g
+            .iter()
+            .map(|(i, s)| {
+                let mut s_rem_i = s.clone();
+                s_rem_i.remove(i);
+                s_rem_i
+            })
+            .fold(HashSet::new(), |mut a, s| {
+                a.extend(s);
+                a
+            });
+        self.md.minimals = Some(
+            (0..self.md.n)
+                .filter(|i| !non_minimals.contains(i))
+                .collect(),
+        )
     }
 
     fn find_maximals(&mut self) {
         self.md.maximals = Some(
             (0..self.md.n)
-                .filter(|i| self.g.get(i).unwrap().is_empty())
+                .filter(|i| self.g.get(i).unwrap().len() == 1)
                 .collect(),
         )
     }
@@ -93,26 +103,28 @@ mod tests {
 
     #[test]
     fn test_new_chain() {
-        let s_0: HashSet<usize> = vec![1, 2].iter().cloned().collect();
-        let s_1: HashSet<usize> = vec![2].iter().cloned().collect();
-        let s_2: HashSet<usize> = vec![].iter().cloned().collect();
-        let mut h = HashMap::new();
-        h.insert(0, s_0);
-        h.insert(1, s_1);
-        h.insert(2, s_2);
+        let s_0: HashSet<usize> = vec![0, 1, 2].iter().cloned().collect();
+        let s_1: HashSet<usize> = vec![1, 2].iter().cloned().collect();
+        let s_2: HashSet<usize> = vec![2].iter().cloned().collect();
+        let mut g: BiPaGraph = HashMap::new();
+        g.insert(0, s_0);
+        g.insert(1, s_1);
+        g.insert(2, s_2);
 
-        assert_eq!(PosetG::new_chain(3), PosetG::new(&h))
+        assert_eq!(PosetG::new_chain(3), PosetG::new(&g))
     }
 
     #[test]
     fn test_new_antichain() {
-        let s = HashSet::new();
-        let mut h = HashMap::new();
-        h.insert(0, s.clone());
-        h.insert(1, s.clone());
-        h.insert(2, s);
+        let s_0: HashSet<usize> = vec![0].iter().cloned().collect();
+        let s_1: HashSet<usize> = vec![1].iter().cloned().collect();
+        let s_2: HashSet<usize> = vec![2].iter().cloned().collect();
+        let mut g: BiPaGraph = HashMap::new();
+        g.insert(0, s_0);
+        g.insert(1, s_1);
+        g.insert(2, s_2);
 
-        assert_eq!(PosetG::new_antichain(3), PosetG::new(&h))
+        assert_eq!(PosetG::new_antichain(3), PosetG::new(&g))
     }
 
     #[test]
@@ -162,15 +174,15 @@ mod tests {
 
     #[test]
     fn test_vee() {
-        let s_0: HashSet<usize> = vec![1, 2].iter().cloned().collect();
-        let s_1 = HashSet::new();
-        let s_2 = HashSet::new();
-        let mut h = HashMap::new();
-        h.insert(0, s_0);
-        h.insert(1, s_1);
-        h.insert(2, s_2);
+        let s_0: HashSet<usize> = vec![0, 1, 2].iter().cloned().collect();
+        let s_1 = vec![1].iter().cloned().collect();
+        let s_2 = vec![2].iter().cloned().collect();
+        let mut g = HashMap::new();
+        g.insert(0, s_0);
+        g.insert(1, s_1);
+        g.insert(2, s_2);
 
-        let mut vee = PosetG::new(&h);
+        let mut vee = PosetG::new(&g);
 
         let minimals: HashSet<usize> = vec![0].iter().cloned().collect();
         let maximals: HashSet<usize> = vec![1, 2].iter().cloned().collect();
@@ -186,14 +198,14 @@ mod tests {
         assert_eq!(vee.md.minimals, Some(minimals));
         assert_eq!(vee.md.maximals, Some(maximals));
 
-        let s_0: HashSet<usize> = HashSet::new();
-        let s_1: HashSet<usize> = vec![0].iter().cloned().collect();
-        let s_2: HashSet<usize> = vec![0].iter().cloned().collect();
-        let mut h = HashMap::new();
-        h.insert(0, s_0);
-        h.insert(1, s_1);
-        h.insert(2, s_2);
-        let vee_op = PosetG::new(&h);
+        let s_0: HashSet<usize> = vec![0].iter().cloned().collect();
+        let s_1 = vec![1, 0].iter().cloned().collect();
+        let s_2 = vec![2, 0].iter().cloned().collect();
+        let mut g = HashMap::new();
+        g.insert(0, s_0);
+        g.insert(1, s_1);
+        g.insert(2, s_2);
+        let vee_op = PosetG::new(&g);
         assert_eq!(vee.op(), vee_op);
     }
 }

@@ -56,10 +56,15 @@ pub mod posetm;
 /// using [Poset::find_top], if it exists, then it is some value $0\le i < n$, and so top is set to
 /// `Some(Elt::A(i))`. If it does not exist, then top is set to `Some(Elt::NotPresent)`.
 /// ```
-/// let p = PosetG::new_chain(3);
+/// use fin_pos::Elt;
+/// use fin_pos::posetg::PosetG;
+/// use crate::fin_pos::PosetConstructors;
+/// use crate::fin_pos::Poset;
+///
+/// let mut p = PosetG::new_chain(3);
 /// assert_eq!(p.md.top, None);
 /// p.find_top();
-/// assert_eq!(p.md.top, Some(Elt::A(1)));
+/// assert_eq!(p.md.top, Some(Elt::A(2)));
 /// ```
 
 type Hasse = HashMap<usize, HashSet<usize>>;

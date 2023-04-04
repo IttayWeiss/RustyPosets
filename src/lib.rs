@@ -39,7 +39,7 @@
 //! In each representation of a poset, there is meta data and the actual poset encoding. The meta data
 //! includes the size of the poset, the identity of top and bottom elements, etc. The meta data is uniform
 //! across the different representations. The actual poset encoding differs, but still has one aspect in
-//! common: the underlying 'set' is taken to be $\{0, 1, 2, ..., n-1\}. The precise way this set in encoded
+//! common: the underlying 'set' is taken to be $\{0, 1, 2, ..., n-1\}$. The precise way this set in encoded
 //! depends on the details of the presentation.
 
 use std::collections::{HashMap, HashSet};
@@ -58,7 +58,6 @@ pub mod posetm;
 /// ```
 /// use fin_pos::Elt;
 /// use fin_pos::posetg::PosetG;
-/// use crate::fin_pos::PosetConstructors;
 /// use crate::fin_pos::Poset;
 ///
 /// let mut p = PosetG::new_chain(3);
@@ -67,6 +66,7 @@ pub mod posetm;
 /// assert_eq!(p.md.top, Some(Elt::A(2)));
 /// ```
 
+// Type aliases:
 type Hasse = HashMap<usize, HashSet<usize>>;
 type BoolMatrix = Vec<Vec<bool>>;
 type BiPaGraph = HashMap<usize, HashSet<usize>>;
@@ -81,7 +81,7 @@ pub enum Elt {
     NotPresent,
 }
 
-/// This structs is part of any representation of a poset. It holds information about the poset
+/// This struct is part of any representation of a poset. It holds information about the poset
 /// that can, albeit with difficulty, be computed from the encoded poset.
 #[derive(PartialEq, Debug)]
 pub struct MetaData {
@@ -115,28 +115,38 @@ impl MetaData {
 pub trait Poset {
     /// Updates the poset's [MetaData] with information about its bottom element.
     fn find_bot(&mut self);
+
     /// Updates the poset's [MetaData] with information about its top element.
     fn find_top(&mut self);
+
     /// Updates the poset's [MetaData] with the set of minimal elements.
     fn find_minimals(&mut self);
+
     /// Updates the poset's [MetaData] with the set of maximal elements.
     fn find_maximals(&mut self);
+
     /// Returns the opposite of the poset.
     fn op(&self) -> Self;
-}
 
-/// Functionality that creates a new poset from given parameters.
-pub trait PosetConstructors {
     /// Creates a linearly ordered chain $\{a_1 < a_2 < \cdots < a_n\}$ of $n$ elements.
     fn new_chain(n: usize) -> Self;
+
     /// Creates an anti-chain of $n$ incomparable elements.
     fn new_antichain(n: usize) -> Self;
-}
 
-/// Functionality that modifies an existing poset based on some parameters.
-pub trait PosetModifiers {
-    /// Updates the poset, increasing its size by $1$, with the new element acting as bottom element.
-    fn adjoin_bot(&self) -> Self;
-    /// Updates the poset, increasing its size by $1$, with the new element acting as top element.
-    fn adjoin_top(&self) -> Self;
+    /// Add a new bottom element to the poset.
+    fn adjoin_bot(&mut self);
+
+    /// Add a new top element to the poset.
+    fn adjoin_top(&mut self);
+
+    /// Creates a new corolla with n leaves and one root.
+    fn new_corolla(n: usize) -> Self
+    where
+        Self: Sized,
+    {
+        let mut c_n = Self::new_antichain(n);
+        c_n.adjoin_bot();
+        c_n
+    }
 }

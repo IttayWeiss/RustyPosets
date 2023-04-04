@@ -1,4 +1,4 @@
-use crate::{Elt, Hasse, MetaData, Poset, PosetConstructors};
+use crate::{Elt, Hasse, MetaData, Poset};
 
 use std::collections::{HashMap, HashSet};
 
@@ -31,6 +31,21 @@ impl Poset for PosetH {
     }
 
     fn op(&self) -> Self {
+        todo!();
+    }
+
+    fn new_chain(n: usize) -> Self {
+        todo!();
+    }
+
+    fn new_antichain(n: usize) -> Self {
+        todo!();
+    }
+
+    fn adjoin_bot(&mut self) {
+        todo!();
+    }
+    fn adjoin_top(&mut self) {
         todo!();
     }
 }

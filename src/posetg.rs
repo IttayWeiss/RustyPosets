@@ -1,4 +1,4 @@
-use crate::{BiPaGraph, Elt, MetaData, Poset, PosetConstructors};
+use crate::{BiPaGraph, Elt, MetaData, Poset};
 
 use std::collections::{HashMap, HashSet};
 /// A representation of a poset encoded as a directed bipartite graph.
@@ -72,9 +72,15 @@ impl Poset for PosetG {
         }
         PosetG::new(&g)
     }
-}
 
-impl PosetConstructors for PosetG {
+    fn adjoin_bot(&mut self) {
+        todo!();
+    }
+
+    fn adjoin_top(&mut self) {
+        todo!();
+    }
+
     fn new_chain(n: usize) -> PosetG {
         let mut g: BiPaGraph = HashMap::new();
         for i in 0..n {

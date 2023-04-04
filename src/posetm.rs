@@ -1,4 +1,4 @@
-use crate::{BoolMatrix, Elt, MetaData, Poset, PosetConstructors, PosetModifiers};
+use crate::{BoolMatrix, Elt, MetaData, Poset};
 
 use ::std::collections::HashSet;
 
@@ -58,9 +58,7 @@ impl Poset for PosetM {
         }
         PosetM::new(&m)
     }
-}
 
-impl PosetConstructors for PosetM {
     fn new_chain(n: usize) -> Self {
         let m: BoolMatrix = (0..n).map(|i| (0..n).map(|j| i <= j).collect()).collect();
 
@@ -72,26 +70,16 @@ impl PosetConstructors for PosetM {
 
         PosetM::new(&m)
     }
-}
 
-impl PosetModifiers for PosetM {
-    fn adjoin_bot(&self) -> Self {
-        let n = self.md.n + 1;
-        let mut m: BoolMatrix = (0..self.md.n)
-            .map(|i| {
-                let mut row = self.m[i].clone();
-                row.push(false);
-                row
-            })
-            .collect();
-
-        let last_row = vec![false; n];
-        m.push(last_row);
-
-        PosetM::new(&m)
+    fn adjoin_bot(&mut self) {
+        // adjoins n as the new bottom element.
+        for row in self.m.iter_mut() {
+            row.push(false);
+        }
+        self.m.push(vec![true; self.md.n]);
     }
 
-    fn adjoin_top(&self) -> Self {
+    fn adjoin_top(&mut self) {
         todo!();
     }
 }

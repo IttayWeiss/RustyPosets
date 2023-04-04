@@ -150,3 +150,37 @@ pub trait Poset {
         c_n
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::posetg::PosetG;
+    use crate::posetm::PosetM;
+
+    #[test]
+    fn test_new_corolla() {
+        let n = 3;
+
+        let mut c = PosetG::new_corolla(n);
+        assert_eq!(c.md.n, n + 1);
+
+        c.find_top();
+        c.find_maximals();
+
+        assert_eq!(c.md.top, Some(Elt::NotPresent));
+        assert_ne!(c.md.bot, None);
+        assert_eq!(c.md.minimals.unwrap().len(), 1);
+        assert_eq!(c.md.maximals.unwrap().len(), n);
+
+        let mut c = PosetM::new_corolla(n);
+        assert_eq!(c.md.n, n + 1);
+
+        c.find_top();
+        c.find_maximals();
+
+        assert_eq!(c.md.top, Some(Elt::NotPresent));
+        assert_ne!(c.md.bot, None);
+        assert_eq!(c.md.minimals.unwrap().len(), 1);
+        assert_eq!(c.md.maximals.unwrap().len(), n);
+    }
+}

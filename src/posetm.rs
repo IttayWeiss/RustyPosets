@@ -72,15 +72,25 @@ impl Poset for PosetM {
     }
 
     fn adjoin_bot(&mut self) {
-        // adjoins n as the new bottom element.
+        let n = self.md.n;
         for row in self.m.iter_mut() {
             row.push(false);
         }
-        self.m.push(vec![true; self.md.n]);
+        self.m.push(vec![true; n + 1]);
+        self.md.n += 1;
+        self.md.bot = Some(Elt::A(n));
+        self.md.minimals = Some(vec![n].iter().cloned().collect());
     }
 
     fn adjoin_top(&mut self) {
-        todo!();
+        let n = self.md.n;
+        for row in self.m.iter_mut() {
+            row.push(true);
+        }
+        self.m.push(vec![false; n]);
+        self.m[n].push(true);
+        self.md.top = Some(Elt::A(n));
+        self.md.maximals = Some(vec![n].iter().cloned().collect());
     }
 }
 

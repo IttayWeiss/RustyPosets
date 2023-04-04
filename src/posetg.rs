@@ -74,11 +74,24 @@ impl Poset for PosetG {
     }
 
     fn adjoin_bot(&mut self) {
-        todo!();
+        let n = self.md.n;
+        self.g.insert(n, (0..=n).collect());
+        self.md.bot = Some(Elt::A(n));
+        self.md.minimals = Some(vec![n].iter().cloned().collect());
+        self.md.n += 1;
     }
 
     fn adjoin_top(&mut self) {
-        todo!();
+        let n = self.md.n;
+        for i in 0..n {
+            self.g.entry(i).and_modify(|s| {
+                s.insert(n);
+            });
+        }
+        self.g.insert(n, vec![n].iter().cloned().collect());
+        self.md.top = Some(Elt::A(n));
+        self.md.maximals = Some(vec![n].iter().cloned().collect());
+        self.md.n += 1;
     }
 
     fn new_chain(n: usize) -> PosetG {

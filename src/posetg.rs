@@ -1,4 +1,4 @@
-use crate::{BiPaGraph, Elt, MetaData, Poset};
+use crate::{AnElement, BiPaGraph, Elements, Elt, MetaData, Poset};
 
 use std::collections::{HashMap, HashSet};
 /// A representation of a poset encoded as a directed bipartite graph.
@@ -35,7 +35,7 @@ impl Poset for PosetG {
     }
 
     fn find_minimals(&mut self) {
-        let non_minimals: HashSet<usize> = self
+        let non_minimals: Elements = self
             .g
             .iter()
             .map(|(i, s)| {
@@ -70,7 +70,7 @@ impl Poset for PosetG {
                 .collect();
             g.insert(i, s);
         }
-        PosetG::new(&g)
+        Self::new(&g)
     }
 
     fn adjoin_bot(&mut self) {
@@ -83,13 +83,12 @@ impl Poset for PosetG {
 
     fn adjoin_top(&mut self) {
         let n = self.md.n;
-        for i in 0..n {
-            self.g.entry(i).and_modify(|s| {
-                s.insert(n);
-            });
-        }
+        let new_top: AnElement = n;
+        self.g.values_mut().for_each(|s| {
+            s.insert(new_top);
+        });
         self.g.insert(n, vec![n].iter().cloned().collect());
-        self.md.top = Some(Elt::A(n));
+        self.md.top = Some(Elt::A(new_top));
         self.md.maximals = Some(vec![n].iter().cloned().collect());
         self.md.n += 1;
     }
@@ -106,13 +105,14 @@ impl Poset for PosetG {
     fn new_antichain(n: usize) -> PosetG {
         let g: BiPaGraph = (0..n)
             .map(|i| {
-                let mut s = HashSet::new();
+                let mut s: Elements = HashSet::new();
                 s.insert(i);
                 (i, s)
             })
             .collect();
         Self::new(&g)
     }
+
     fn sub(&self, s_0: &HashSet<usize>) -> Self {
         let g: BiPaGraph = s_0
             .iter()

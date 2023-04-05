@@ -67,9 +67,11 @@ pub mod posetm;
 /// ```
 
 // Type aliases:
-type Hasse = HashMap<usize, HashSet<usize>>;
+type AnElement = usize;
+type Elements = HashSet<AnElement>;
+type Hasse = HashMap<AnElement, Elements>;
 type BoolMatrix = Vec<Vec<bool>>;
-type BiPaGraph = HashMap<usize, HashSet<usize>>;
+type BiPaGraph = HashMap<AnElement, Elements>;
 
 #[derive(PartialEq, Debug, Hash, Eq)]
 pub enum Elt {

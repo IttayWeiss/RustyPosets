@@ -1,4 +1,4 @@
-use crate::{BoolMatrix, Elt, MetaData, Poset};
+use crate::{AnElement, BoolMatrix, Elements, Elt, MetaData, Poset};
 
 use ::std::collections::HashSet;
 
@@ -19,6 +19,14 @@ impl PosetM {
 }
 
 impl Poset for PosetM {
+    fn elements(&self) -> Box<dyn Iterator<Item = AnElement>> {
+        Box::new(0..self.md.n)
+    }
+
+    fn leq(&self, x: AnElement, y: AnElement) -> bool {
+        self.m[x][y]
+    }
+
     fn find_bot(&mut self) {
         self.md.bot = Some(
             match (0..self.md.n).find(|&i| (0..self.md.n).all(|j| self.m[i][j])) {
@@ -93,7 +101,7 @@ impl Poset for PosetM {
         self.md.maximals = Some(vec![n].iter().cloned().collect());
     }
 
-    fn sub(&self, s_0: &HashSet<usize>) -> Self {
+    fn sub(&self, s_0: &Elements) -> Self {
         todo!();
     }
 }

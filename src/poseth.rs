@@ -1,4 +1,4 @@
-use crate::{Elt, Hasse, MetaData, Poset};
+use crate::{Elements, Elt, Hasse, MetaData, Poset};
 
 use std::collections::{HashMap, HashSet};
 
@@ -49,7 +49,15 @@ impl Poset for PosetH {
         todo!();
     }
 
-    fn sub(&self, s_0: &HashSet<usize>) -> Self {
+    fn sub(&self, s_0: &Elements) -> Self {
         todo!();
+    }
+
+    fn elements(&self) -> Box<dyn Iterator<Item = crate::AnElement>> {
+        todo!()
+    }
+
+    fn leq(&self, x: crate::AnElement, y: crate::AnElement) -> bool {
+        todo!()
     }
 }

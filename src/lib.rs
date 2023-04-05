@@ -115,6 +115,12 @@ impl MetaData {
 
 /// Functionality that can be performed on an existing poset.
 pub trait Poset {
+    /// Returns an iterator over the elements of the poset.
+    fn elements(&self) -> Box<dyn Iterator<Item = AnElement>>;
+
+    /// Returns true if $x\le y$ and false if $x\nleq y$ (i.e., if either $x > y$ or $x$ and $y$ are incomparable).
+    fn leq(&self, x: AnElement, y: AnElement) -> bool;
+
     /// Updates the poset's [MetaData] with information about its bottom element.
     fn find_bot(&mut self);
 
@@ -152,7 +158,21 @@ pub trait Poset {
         c_n
     }
 
-    fn sub(&self, s_0: &HashSet<usize>) -> Self;
+    /// Computes a new poset consisting of the specified set s_0 of elmenets as a subposet of the given poset.
+    fn sub(&self, s_0: &Elements) -> Self;
+
+    /// Checks if the poset is an anti-chain. The default implementation is usually not efficient. If checking whether the poset
+    /// is an anti-chain is a frequent operation with your representation of the poset, consider implementing this method manually.
+    fn is_antichain(&self) -> bool {
+        for x in self.elements() {
+            for y in self.elements() {
+                if self.leq(x, y) && x != y {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }
 
 #[cfg(test)]

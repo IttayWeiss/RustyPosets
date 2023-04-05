@@ -19,6 +19,13 @@ impl PosetG {
 
 // TODO: Computing bot/top when minimals/maximals are known is very easy. Can do that generically?
 impl Poset for PosetG {
+    fn elements(&self) -> Box<dyn Iterator<Item = AnElement>> {
+        Box::new(0..self.md.n)
+    }
+
+    fn leq(&self, x: AnElement, y: AnElement) -> bool {
+        self.g.get(&x).unwrap().contains(&y)
+    }
     fn find_bot(&mut self) {
         self.md.bot = Some(match self.g.iter().find(|(_, s)| s.len() == self.md.n) {
             Some((&i, _)) => Elt::A(i),
@@ -75,9 +82,10 @@ impl Poset for PosetG {
 
     fn adjoin_bot(&mut self) {
         let n = self.md.n;
+        let new_bot: AnElement = n;
         self.g.insert(n, (0..=n).collect());
-        self.md.bot = Some(Elt::A(n));
-        self.md.minimals = Some(vec![n].iter().cloned().collect());
+        self.md.bot = Some(Elt::A(new_bot));
+        self.md.minimals = Some(vec![new_bot].iter().cloned().collect());
         self.md.n += 1;
     }
 
@@ -89,14 +97,14 @@ impl Poset for PosetG {
         });
         self.g.insert(n, vec![n].iter().cloned().collect());
         self.md.top = Some(Elt::A(new_top));
-        self.md.maximals = Some(vec![n].iter().cloned().collect());
+        self.md.maximals = Some(vec![new_top].iter().cloned().collect());
         self.md.n += 1;
     }
 
     fn new_chain(n: usize) -> PosetG {
         let mut g: BiPaGraph = HashMap::new();
         for i in 0..n {
-            let s: HashSet<_> = (i..n).collect();
+            let s: Elements = (i..n).collect();
             g.insert(i, s);
         }
         PosetG::new(&g)
@@ -113,7 +121,7 @@ impl Poset for PosetG {
         Self::new(&g)
     }
 
-    fn sub(&self, s_0: &HashSet<usize>) -> Self {
+    fn sub(&self, s_0: &Elements) -> Self {
         let g: BiPaGraph = s_0
             .iter()
             .map(|i| {

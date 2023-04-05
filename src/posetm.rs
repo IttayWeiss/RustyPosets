@@ -92,6 +92,10 @@ impl Poset for PosetM {
         self.md.top = Some(Elt::A(n));
         self.md.maximals = Some(vec![n].iter().cloned().collect());
     }
+
+    fn sub(&self, s_0: &HashSet<usize>) -> Self {
+        todo!();
+    }
 }
 
 #[cfg(test)]

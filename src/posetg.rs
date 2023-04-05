@@ -111,7 +111,20 @@ impl Poset for PosetG {
                 (i, s)
             })
             .collect();
-        PosetG::new(&g)
+        Self::new(&g)
+    }
+    fn sub(&self, s_0: &HashSet<usize>) -> Self {
+        let g: BiPaGraph = s_0
+            .iter()
+            .map(|i| {
+                (
+                    *i,
+                    self.g.get(i).unwrap().difference(s_0).cloned().collect(),
+                )
+            })
+            .collect();
+
+        Self::new(&g)
     }
 }
 

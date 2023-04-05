@@ -149,6 +149,8 @@ pub trait Poset {
         c_n.adjoin_bot();
         c_n
     }
+
+    fn sub(&self, s_0: &HashSet<usize>) -> Self;
 }
 
 #[cfg(test)]

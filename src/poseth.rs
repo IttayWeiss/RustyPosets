@@ -48,4 +48,8 @@ impl Poset for PosetH {
     fn adjoin_top(&mut self) {
         todo!();
     }
+
+    fn sub(&self, s_0: &HashSet<usize>) -> Self {
+        todo!();
+    }
 }
